@@ -1,0 +1,649 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Mood Meter</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error": "#ba1a1a",
+                      "outline": "#767586",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-fixed": "#2a1700",
+                      "on-primary-fixed": "#07006c",
+                      "primary": "#4648d4",
+                      "on-surface-variant": "#464554",
+                      "primary-container": "#6063ee",
+                      "on-secondary-container": "#00714d",
+                      "surface": "#f8f9ff",
+                      "surface-tint": "#494bd6",
+                      "tertiary": "#825100",
+                      "secondary-container": "#6cf8bb",
+                      "tertiary-fixed": "#ffddb8",
+                      "secondary-fixed-dim": "#4edea3",
+                      "on-surface": "#0b1c30",
+                      "outline-variant": "#c7c4d7",
+                      "on-primary-fixed-variant": "#2f2ebe",
+                      "on-error": "#ffffff",
+                      "inverse-on-surface": "#eaf1ff",
+                      "tertiary-container": "#a36700",
+                      "secondary": "#006c49",
+                      "primary-fixed-dim": "#c0c1ff",
+                      "on-secondary-fixed": "#002113",
+                      "background": "#f8f9ff",
+                      "tertiary-fixed-dim": "#ffb95f",
+                      "on-secondary-fixed-variant": "#005236",
+                      "on-primary-container": "#fffbff",
+                      "secondary-fixed": "#6ffbbe",
+                      "on-background": "#0b1c30",
+                      "inverse-primary": "#c0c1ff",
+                      "surface-container": "#e5eeff",
+                      "surface-dim": "#cbdbf5",
+                      "primary-fixed": "#e1e0ff",
+                      "surface-container-high": "#dce9ff",
+                      "on-tertiary": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "inverse-surface": "#213145",
+                      "surface-container-lowest": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "surface-container-low": "#eff4ff",
+                      "on-tertiary-fixed-variant": "#653e00",
+                      "surface-container-highest": "#d3e4fe",
+                      "surface-variant": "#d3e4fe",
+                      "on-tertiary-container": "#fffbff",
+                      "surface-bright": "#f8f9ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "margin-mobile": "20px",
+                      "xl": "40px",
+                      "base": "4px",
+                      "2xl": "64px",
+                      "lg": "24px",
+                      "sm": "8px",
+                      "gutter": "16px",
+                      "md": "16px",
+                      "container-max": "1200px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "label-md": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "display": ["Inter"],
+                      "label-sm": ["Inter"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+              }
+            },
+          },
+        }
+      </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+        }
+        .dark .glass-card {
+            background: rgba(21, 31, 45, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            transition: background-color 1s ease;
+            overflow-x: hidden;
+        }
+        .section-transition {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .hidden-section {
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen">
+<!-- Background Shader -->
+<div class="fixed inset-0 -z-10 w-full h-full">
+<!-- STITCH_SHADER_START:ANIMATION_4 class="absolute inset-0 w-full h-full" -->
+<div class="absolute inset-0 w-full h-full" style="display:block;">
+<canvas id="shader-canvas-ANIMATION_4" style="display:block;width:100%;height:100%"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('shader-canvas-ANIMATION_4');
+
+  // Sync the WebGL drawing-buffer size with the CSS-driven layout size.
+  // This fires on initial layout and whenever the element is resized.
+  function syncSize() {
+    const w = canvas.clientWidth  || 1280;
+    const h = canvas.clientHeight || 720;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width  = w;
+      canvas.height = h;
+    }
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(syncSize).observe(canvas);
+  }
+  syncSize();
+
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) return;
+  const vs = `attribute vec2 a_position;
+varying vec2 v_texCoord;
+void main() {
+  v_texCoord = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}`;
+  const fs = `precision highp float;
+uniform float u_time;
+uniform vec2 u_resolution;
+varying vec2 v_texCoord;
+
+void main() {
+    vec2 uv = v_texCoord;
+    
+    // Slow, organic movement
+    float t = u_time * 0.2;
+    
+    // Create multiple color blobs
+    vec3 color1 = vec3(0.38, 0.4, 0.94); // Primary (Indigo)
+    vec3 color2 = vec3(0.06, 0.8, 0.47); // Success (Emerald)
+    vec3 color3 = vec3(0.96, 0.3, 0.4); // Danger (Rose)
+    vec3 color4 = vec3(1.0, 0.8, 0.2); // Warning (Amber)
+    
+    float n1 = sin(uv.x * 3.0 + t) * cos(uv.y * 2.0 + t);
+    float n2 = sin(uv.y * 4.0 - t * 0.5) * cos(uv.x * 2.0 + t * 0.3);
+    float n3 = sin(length(uv - 0.5) * 5.0 + t);
+    
+    vec3 finalColor = mix(color1, color2, n1 * 0.5 + 0.5);
+    finalColor = mix(finalColor, color3, n2 * 0.5 + 0.5);
+    finalColor = mix(finalColor, color4, n3 * 0.3 + 0.3);
+    
+    // Desaturate and brighten for a "soft" feel
+    finalColor = mix(finalColor, vec3(1.0), 0.4);
+    
+    gl_FragColor = vec4(finalColor, 1.0);
+}`;
+  function cs(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const pos = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(pos);
+  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+  const uRes = gl.getUniformLocation(prog, 'u_resolution');
+  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+
+  // u_mouse is in pixel coordinates matching u_resolution (ShaderToy convention).
+  // Shaders that need normalized coords should use: u_mouse / u_resolution.
+  let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+  window.addEventListener('mousemove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width && rect.height) {
+      const nx = (event.clientX - rect.left) / rect.width;
+      const ny = 1.0 - (event.clientY - rect.top) / rect.height;
+      mouse.x = nx * canvas.width;
+      mouse.y = ny * canvas.height;
+    }
+  });
+
+  function render(t) {
+    if (typeof ResizeObserver === 'undefined') syncSize();
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    if (uTime) gl.uniform1f(uTime, t * 0.001);
+    if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+    if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(render);
+  }
+  render(0);
+})();
+</script>
+</div>
+<!-- STITCH_SHADER_END:ANIMATION_4 -->
+</div>
+<!-- TopAppBar Component -->
+<header class="fixed top-0 w-full z-50 bg-white/40 dark:bg-surface-container-highest/40 backdrop-blur-xl border-b border-white/20 dark:border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.05)] flex justify-between items-center px-margin-mobile h-16" id="top-app-bar">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed-dim" style="font-size: 28px;">bubble_chart</span>
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary dark:text-primary-fixed-dim">Mood Meter</h1>
+</div>
+<button class="p-2 rounded-full hover:bg-white/20 transition-all duration-300 active:scale-95" id="theme-toggle">
+<span class="material-symbols-outlined text-outline dark:text-outline-variant">dark_mode</span>
+</button>
+</header>
+<!-- Main Canvas -->
+<main class="pt-24 pb-32 px-margin-mobile max-w-container-max mx-auto">
+<!-- Home Section -->
+<section class="section-transition" id="section-home">
+<div class="mb-lg">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile mb-xs">Hello, there</h2>
+<p class="text-outline font-body-md">How are you feeling today?</p>
+</div>
+<!-- Mood Grid (Bento Style) -->
+<div class="grid grid-cols-2 gap-md sm:grid-cols-4">
+<button class="glass-card p-lg rounded-xl flex flex-col items-center justify-center gap-sm active:scale-95 transition-transform hover:bg-white/50" onclick="logMood('Happy', '😀', '#4edea3')">
+<span class="text-4xl">😀</span>
+<span class="font-label-md text-label-md">Happy</span>
+</button>
+<button class="glass-card p-lg rounded-xl flex flex-col items-center justify-center gap-sm active:scale-95 transition-transform hover:bg-white/50" onclick="logMood('Good', '😊', '#6063ee')">
+<span class="text-4xl">😊</span>
+<span class="font-label-md text-label-md">Good</span>
+</button>
+<button class="glass-card p-lg rounded-xl flex flex-col items-center justify-center gap-sm active:scale-95 transition-transform hover:bg-white/50" onclick="logMood('Neutral', '😐', '#767586')">
+<span class="text-4xl">😐</span>
+<span class="font-label-md text-label-md">Neutral</span>
+</button>
+<button class="glass-card p-lg rounded-xl flex flex-col items-center justify-center gap-sm active:scale-95 transition-transform hover:bg-white/50" onclick="logMood('Sad', '😔', '#4648d4')">
+<span class="text-4xl">😔</span>
+<span class="font-label-md text-label-md">Sad</span>
+</button>
+<button class="glass-card p-lg rounded-xl flex flex-col items-center justify-center gap-sm active:scale-95 transition-transform hover:bg-white/50" onclick="logMood('Angry', '😡', '#ba1a1a')">
+<span class="text-4xl">😡</span>
+<span class="font-label-md text-label-md">Angry</span>
+</button>
+<button class="glass-card p-lg rounded-xl flex flex-col items-center justify-center gap-sm active:scale-95 transition-transform hover:bg-white/50" onclick="logMood('Tired', '😴', '#825100')">
+<span class="text-4xl">😴</span>
+<span class="font-label-md text-label-md">Tired</span>
+</button>
+<button class="glass-card p-lg rounded-xl flex flex-col items-center justify-center gap-sm active:scale-95 transition-transform hover:bg-white/50" onclick="logMood('Stressed', '😰', '#a36700')">
+<span class="text-4xl">😰</span>
+<span class="font-label-md text-label-md">Stressed</span>
+</button>
+<button class="glass-card p-lg rounded-xl flex flex-col items-center justify-center gap-sm active:scale-95 transition-transform hover:bg-white/50" onclick="logMood('Loved', '❤️', '#ffdad6')">
+<span class="text-4xl">❤️</span>
+<span class="font-label-md text-label-md">Loved</span>
+</button>
+</div>
+<!-- Motivation Notification -->
+<div class="mt-lg hidden opacity-0 transition-opacity duration-500" id="motivation-box">
+<div class="glass-card p-md rounded-xl border-primary/30 flex items-center gap-md">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+<p class="font-body-md text-primary" id="motivation-text"></p>
+</div>
+</div>
+</section>
+<!-- Stats Section -->
+<section class="section-transition hidden-section" id="section-stats">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile mb-lg">Your Trends</h2>
+<div class="glass-card p-lg rounded-xl mb-lg">
+<canvas height="200" id="moodChart"></canvas>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div class="glass-card p-lg rounded-xl">
+<p class="text-outline font-label-sm mb-xs">Most Selected</p>
+<p class="font-headline-md text-headline-md" id="stat-most-selected">--</p>
+</div>
+<div class="glass-card p-lg rounded-xl">
+<p class="text-outline font-label-sm mb-xs">Streak</p>
+<div class="flex items-baseline gap-xs">
+<p class="font-headline-md text-headline-md" id="stat-streak">0</p>
+<span class="font-label-sm">Days</span>
+</div>
+</div>
+</div>
+</section>
+<!-- History Section -->
+<section class="section-transition hidden-section" id="section-history">
+<div class="flex justify-between items-end mb-lg">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile">Logs</h2>
+<button class="flex items-center gap-xs font-label-md text-primary bg-primary/10 px-md py-sm rounded-xl" onclick="exportHistory()">
+<span class="material-symbols-outlined text-sm">download</span> Export
+                </button>
+</div>
+<div class="mb-lg">
+<div class="glass-card flex items-center px-md py-sm rounded-xl">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 w-full text-body-md px-sm" id="history-search" placeholder="Search moods..." type="text">
+</div>
+</div>
+<div class="space-y-md" id="history-list">
+<!-- Entries will be injected here -->
+</div>
+</section>
+<!-- Settings Section -->
+<section class="section-transition hidden-section" id="section-settings">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile mb-lg">Settings</h2>
+<div class="space-y-md">
+<div class="glass-card p-lg rounded-xl flex items-center justify-between">
+<div>
+<p class="font-label-md">Visual Atmosphere</p>
+<p class="text-outline text-label-sm">Enable animated shader background</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" id="animation-toggle" type="checkbox">
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="glass-card p-lg rounded-xl">
+<button class="w-full text-left flex items-center justify-between group" onclick="resetData()">
+<div>
+<p class="font-label-md text-error">Reset Data</p>
+<p class="text-outline text-label-sm">Permanently delete all mood logs</p>
+</div>
+<span class="material-symbols-outlined text-error opacity-0 group-hover:opacity-100 transition-opacity">delete_forever</span>
+</button>
+</div>
+<div class="glass-card p-lg rounded-xl flex items-center justify-between">
+<div>
+<p class="font-label-md">About</p>
+<p class="text-outline text-label-sm">Version 1.0.4 - Premium</p>
+</div>
+<span class="material-symbols-outlined text-outline">info</span>
+</div>
+</div>
+</section>
+</main>
+<!-- FAB -->
+<button class="fixed right-6 bottom-24 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center active:scale-90 transition-transform z-40" onclick="openMoodModal()">
+<span class="material-symbols-outlined">add</span>
+</button>
+<!-- BottomNavBar Component -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-white/60 dark:bg-surface-container-highest/60 backdrop-blur-xl border-t border-white/20 dark:border-white/10 shadow-[0_-10px_30px_rgba(0,0,0,0.03)] flex justify-around items-center px-4 pb-4 pt-2 rounded-t-xl">
+<button class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim bg-primary/10 rounded-xl p-2 active:scale-90 transition-transform duration-200" id="nav-home" onclick="navigateTo('home')">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-[10px]">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-outline dark:text-outline-variant p-2 active:scale-90 transition-transform duration-200" id="nav-stats" onclick="navigateTo('stats')">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-label-sm text-[10px]">Stats</span>
+</button>
+<button class="flex flex-col items-center justify-center text-outline dark:text-outline-variant p-2 active:scale-90 transition-transform duration-200" id="nav-history" onclick="navigateTo('history')">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-sm text-[10px]">History</span>
+</button>
+<button class="flex flex-col items-center justify-center text-outline dark:text-outline-variant p-2 active:scale-90 transition-transform duration-200" id="nav-settings" onclick="navigateTo('settings')">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-sm text-[10px]">Settings</span>
+</button>
+</nav>
+<!-- Modal for Log Mood (Triggered by FAB) -->
+<div class="fixed inset-0 z-[60] hidden" id="mood-modal">
+<div class="absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="closeMoodModal()"></div>
+<div class="absolute bottom-0 left-0 w-full glass-card rounded-t-3xl p-lg animate-slide-up">
+<div class="w-12 h-1.5 bg-outline-variant/30 rounded-full mx-auto mb-lg"></div>
+<h3 class="font-headline-md text-headline-md mb-md">Quick Log</h3>
+<div class="grid grid-cols-4 gap-md mb-xl">
+<button class="text-4xl" onclick="logMood('Happy', '😀')">😀</button>
+<button class="text-4xl" onclick="logMood('Good', '😊')">😊</button>
+<button class="text-4xl" onclick="logMood('Neutral', '😐')">😐</button>
+<button class="text-4xl" onclick="logMood('Loved', '❤️')">❤️</button>
+</div>
+<button class="w-full bg-primary text-white py-md rounded-xl font-label-md" onclick="closeMoodModal()">Close</button>
+</div>
+</div>
+<script>
+        // State Management
+        let logs = JSON.parse(localStorage.getItem('moodLogs')) || [];
+        let moodChartInstance = null;
+
+        const navItems = ['home', 'stats', 'history', 'settings'];
+        const sections = {
+            home: document.getElementById('section-home'),
+            stats: document.getElementById('section-stats'),
+            history: document.getElementById('section-history'),
+            settings: document.getElementById('section-settings')
+        };
+
+        const activeClass = "flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim bg-primary/10 rounded-xl p-2";
+        const inactiveClass = "flex flex-col items-center justify-center text-outline dark:text-outline-variant p-2";
+
+        // Navigation Logic
+        function navigateTo(target) {
+            navItems.forEach(item => {
+                const navBtn = document.getElementById(`nav-${item}`);
+                if (item === target) {
+                    navBtn.className = activeClass;
+                    sections[item].classList.remove('hidden-section');
+                    sections[item].style.display = 'block';
+                    setTimeout(() => sections[item].style.opacity = '1', 10);
+                } else {
+                    navBtn.className = inactiveClass;
+                    sections[item].style.opacity = '0';
+                    setTimeout(() => {
+                        sections[item].classList.add('hidden-section');
+                        sections[item].style.display = 'none';
+                    }, 300);
+                }
+            });
+
+            if (target === 'stats') renderStats();
+            if (target === 'history') renderHistory();
+        }
+
+        // Mood Logging Logic
+        function logMood(label, emoji, color) {
+            const entry = {
+                id: Date.now(),
+                label,
+                emoji,
+                color,
+                timestamp: new Date().toISOString()
+            };
+            logs.unshift(entry);
+            localStorage.setItem('moodLogs', JSON.stringify(logs));
+            
+            showMotivation(label);
+            closeMoodModal();
+            updateAtmosphere(color);
+        }
+
+        function showMotivation(label) {
+            const box = document.getElementById('motivation-box');
+            const text = document.getElementById('motivation-text');
+            const messages = {
+                Happy: "Keep that smile shining! You're doing great.",
+                Good: "Sounds like a wonderful day. Enjoy every moment.",
+                Neutral: "It's okay to just be. Peace is productive.",
+                Sad: "Take your time. Better days are ahead.",
+                Angry: "Deep breaths. This too shall pass.",
+                Tired: "Rest is just as important as work. Be kind to yourself.",
+                Stressed: "One small step at a time. You've got this.",
+                Loved: "Gratitude grows when it's shared. Pass it on!"
+            };
+            
+            text.innerText = messages[label] || "Mood logged successfully!";
+            box.classList.remove('hidden', 'opacity-0');
+            setTimeout(() => {
+                box.classList.add('opacity-0');
+                setTimeout(() => box.classList.add('hidden'), 500);
+            }, 4000);
+        }
+
+        function updateAtmosphere(color) {
+            if (color) {
+                // Apply a subtle tint to the page background transition
+                document.body.style.backgroundColor = `${color}15`; // 15 is hex for low opacity
+            }
+        }
+
+        // Stats Logic
+        function renderStats() {
+            const ctx = document.getElementById('moodChart').getContext('2d');
+            
+            if (moodChartInstance) moodChartInstance.destroy();
+
+            const last7Days = logs.slice(0, 10).reverse();
+            const labels = last7Days.map(l => new Date(l.timestamp).toLocaleDateString([], { weekday: 'short' }));
+            const data = last7Days.map(l => {
+                const map = { Happy: 5, Good: 4, Neutral: 3, Sad: 2, Angry: 1, Tired: 1, Stressed: 1, Loved: 5 };
+                return map[l.label] || 3;
+            });
+
+            moodChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Mood Level',
+                        data: data,
+                        borderColor: '#4648d4',
+                        backgroundColor: 'rgba(70, 72, 212, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#4648d4'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { min: 1, max: 5, grid: { display: false }, ticks: { display: false } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // Summary stats
+            const counts = {};
+            logs.forEach(l => counts[l.label] = (counts[l.label] || 0) + 1);
+            const mostSelected = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b, "--");
+            document.getElementById('stat-most-selected').innerText = mostSelected !== "--" ? mostSelected : "--";
+
+            // Basic streak calculation
+            document.getElementById('stat-streak').innerText = logs.length > 0 ? "1" : "0"; // Placeholder logic
+        }
+
+        // History Logic
+        function renderHistory(query = '') {
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
+            
+            const filtered = logs.filter(l => l.label.toLowerCase().includes(query.toLowerCase()));
+            
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="glass-card p-lg rounded-xl text-center text-outline">No logs found yet.</div>';
+                return;
+            }
+
+            filtered.forEach(entry => {
+                const date = new Date(entry.timestamp);
+                const el = document.createElement('div');
+                el.className = 'glass-card p-md rounded-xl flex items-center justify-between group';
+                el.innerHTML = `
+                    <div class="flex items-center gap-md">
+                        <span class="text-3xl">${entry.emoji}</span>
+                        <div>
+                            <p class="font-label-md">${entry.label}</p>
+                            <p class="text-outline text-label-sm">${date.toLocaleDateString()} at ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                        </div>
+                    </div>
+                    <button onclick="deleteEntry(${entry.id})" class="text-error opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                `;
+                list.appendChild(el);
+            });
+        }
+
+        function deleteEntry(id) {
+            logs = logs.filter(l => l.id !== id);
+            localStorage.setItem('moodLogs', JSON.stringify(logs));
+            renderHistory();
+        }
+
+        function exportHistory() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(logs));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "mood_history.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        // Theme Toggle
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const icon = document.querySelector('#theme-toggle span');
+            icon.innerText = document.documentElement.classList.contains('dark') ? 'light_mode' : 'dark_mode';
+        });
+
+        // Modal Logic
+        function openMoodModal() { document.getElementById('mood-modal').classList.remove('hidden'); }
+        function closeMoodModal() { document.getElementById('mood-modal').classList.add('hidden'); }
+
+        // Settings Logic
+        function resetData() {
+            if (confirm("Are you sure you want to delete all your mood history? This cannot be undone.")) {
+                logs = [];
+                localStorage.setItem('moodLogs', JSON.stringify(logs));
+                navigateTo('home');
+            }
+        }
+
+        document.getElementById('animation-toggle').addEventListener('change', (e) => {
+            const shader = document.querySelector('webgl-shader');
+            shader.style.display = e.target.checked ? 'block' : 'none';
+        });
+
+        document.getElementById('history-search').addEventListener('input', (e) => {
+            renderHistory(e.target.value);
+        });
+
+        // Initialize
+        navigateTo('home');
+    </script>
+<style>
+        @keyframes slide-up {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .animate-slide-up {
+            animation: slide-up 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</body></html>
